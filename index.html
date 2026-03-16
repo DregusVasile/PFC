@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Magazin cu Recomandări</title>
+<style>
+body{
+font-family:Arial;
+background:#f2f2f2;
+text-align:center;
+}
+.container{
+width:900px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px gray;
+}
+button{
+padding:8px 15px;
+margin:5px;
+cursor:pointer;
+}
+.product{
+border:1px solid #ccc;
+margin:5px;
+padding:10px;
+border-radius:5px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+}
+#products{
+max-height:450px;
+overflow-y:auto;
+}
+.recommend{
+background:#e8f5e9;
+}
+select,input{
+padding:7px;
+margin:5px;
+}
+
+.auth-row{
+display:flex;
+justify-content:center;
+gap:30px;
+flex-wrap:wrap;
+margin-bottom:15px;
+}
+
+.filters{
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+margin-bottom:10px;
+}
+
+.filter-col{
+display:flex;
+flex-direction:column;
+align-items:flex-start;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Magazin Online</h1>
+<div id="auth">
+<h2>Autentificare</h2>
+<div class="auth-row">
+<div>
+<h3>Log In</h3>
+<input id="loginUser" placeholder="Username">
+<input id="loginPass" type="password" placeholder="Parolă">
+<br>
+<button onclick="login()">Log In</button>
+</div>
+<div>
+<h3>Sign Up</h3>
+<input id="signUser" placeholder="Username nou">
+<input id="signPass" type="password" placeholder="Parolă nouă">
+<br>
+<button onclick="signup()">Sign Up</button>
+</div>
+</div>
+</div>
+<div id="shop" style="display:none">
+<h2 id="welcome"></h2>
+<div class="filters">
+<div class="filter-col">
+<label>Categoria</label>
+<select id="categorySelect" onchange="loadSubcategories()"></select>
+</div>
+<div class="filter-col">
+<label>Subcategoria</label>
+<select id="subSelect" onchange="showProducts()"></select>
+</div>
+</div>
+<div>
+<button onclick="showProducts(true)">Toate produsele</button>
+</div>
+<br>
+<input id="search" placeholder="Caută produs..." onkeyup="searchProduct()">
+<div id="products"></div>
+<h3>Recomandări generale</h3>
+<div id="generalRec"></div>
+<h3>Recomandări bazate pe alți utilizatori</h3>
+<div id="userRec"></div>
+</div>
+</div>
+<script>
+const DEMO_USER_COUNT = 20
+const DEMO_USER_PASS = "pass"
+
+function initDemoUsers(){
+  for(let i=1;i<=DEMO_USER_COUNT;i++){
+    let key = "user_user"+i
+    if(!localStorage.getItem(key)){
+      localStorage.setItem(key, DEMO_USER_PASS)
+    }
+  }
+}
+
+let currentUser = ""
+
+/* PRODUSE */
+const products=[
+/* CASNICE */
+
+/* Bucătărie și Gătit */
+
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Tigaie antiaderenta"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Oala sub presiune"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Set cutite inox"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Tocator"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Ibric"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Tava cuptor"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Forma tort"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Razatoare"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Strecuratoare"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Tel"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Spatula silicon"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Deschizator conserve"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Tirbuson"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Cantar bucatarie"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Boluri amestecat"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Recipiente depozitare"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Suport vase"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Cos gunoi pedala"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Sort bucatarie"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Manusa termica"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Folie aluminiu"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Pungi vidat"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Suport condimente"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Rasnita sare piper"},
+{cat:"Casnice",sub:"Bucatarie si Gatit",name:"Prosop bucatarie"},
+
+
+/* Servirea Mesei */
+
+{cat:"Casnice",sub:"Servirea Mesei",name:"Set farfurii"},
+{cat:"Casnice",sub:"Servirea Mesei",name:"Set tacamuri"},
+{cat:"Casnice",sub:"Servirea Mesei",name:"Pahare apa"},
+{cat:"Casnice",sub:"Servirea Mesei",name:"Pahare vin"},
+{cat:"Casnice",sub:"Servirea Mesei",name:"Cana cafea"},
+{cat:"Casnice",sub:"Servirea Mesei",name:"Fata masa"},
+{cat:"Casnice",sub:"Servirea Mesei",name:"Napron"},
+{cat:"Casnice",sub:"Servirea Mesei",name:"Suport farfurii"},
+{cat:"Casnice",sub:"Servirea Mesei",name:"Zaharnita"},
+{cat:"Casnice",sub:"Servirea Mesei",name:"Letiera"},
+{cat:"Casnice",sub:"Servirea Mesei",name:"Platou servire"},
+{cat:"Casnice",sub:"Servirea Mesei",name:"Fructiera"},
+{cat:"Casnice",sub:"Servirea Mesei",name:"Oliviera"},
+{cat:"Casnice",sub:"Servirea Mesei",name:"Cos paine"},
+{cat:"Casnice",sub:"Servirea Mesei",name:"Servetele masa"},
+
+
+/* Curatenie */
+
+{cat:"Casnice",sub:"Curatenie",name:"Matura si faras"},
+{cat:"Casnice",sub:"Curatenie",name:"Mop galeata"},
+{cat:"Casnice",sub:"Curatenie",name:"Galeata"},
+{cat:"Casnice",sub:"Curatenie",name:"Laveta microfibra"},
+{cat:"Casnice",sub:"Curatenie",name:"Burete vase"},
+{cat:"Casnice",sub:"Curatenie",name:"Perie haine"},
+{cat:"Casnice",sub:"Curatenie",name:"Detergent universal"},
+{cat:"Casnice",sub:"Curatenie",name:"Solutie geamuri"},
+{cat:"Casnice",sub:"Curatenie",name:"Detartrant baie"},
+{cat:"Casnice",sub:"Curatenie",name:"Odorizant camera"},
+{cat:"Casnice",sub:"Curatenie",name:"Masa calcat"},
+{cat:"Casnice",sub:"Curatenie",name:"Uscator rufe"},
+{cat:"Casnice",sub:"Curatenie",name:"Cos rufe"},
+{cat:"Casnice",sub:"Curatenie",name:"Carlige rufe"},
+{cat:"Casnice",sub:"Curatenie",name:"Umerase"},
+{cat:"Casnice",sub:"Curatenie",name:"Rulou scame"},
+{cat:"Casnice",sub:"Curatenie",name:"Pamatuf praf"},
+{cat:"Casnice",sub:"Curatenie",name:"Stergator picioare"},
+{cat:"Casnice",sub:"Curatenie",name:"Manusi cauciuc"},
+{cat:"Casnice",sub:"Curatenie",name:"Scara interior"},
+
+
+/* Baie */
+
+{cat:"Casnice",sub:"Baie",name:"Covoras baie"},
+{cat:"Casnice",sub:"Baie",name:"Perdea dus"},
+{cat:"Casnice",sub:"Baie",name:"Suport periute"},
+{cat:"Casnice",sub:"Baie",name:"Dozator sapun"},
+{cat:"Casnice",sub:"Baie",name:"Perie toaleta"},
+{cat:"Casnice",sub:"Baie",name:"Oglinda cosmetica"},
+{cat:"Casnice",sub:"Baie",name:"Prosop maini"},
+{cat:"Casnice",sub:"Baie",name:"Prosop corp"},
+{cat:"Casnice",sub:"Baie",name:"Halat baie"},
+{cat:"Casnice",sub:"Baie",name:"Cantar baie"},
+{cat:"Casnice",sub:"Baie",name:"Suport hartie igienica"},
+{cat:"Casnice",sub:"Baie",name:"Etajera baie"},
+{cat:"Casnice",sub:"Baie",name:"Cos accesorii"},
+{cat:"Casnice",sub:"Baie",name:"Sapuniere"},
+{cat:"Casnice",sub:"Baie",name:"Perie spate"},
+
+
+/* Dormitor */
+
+{cat:"Casnice",sub:"Dormitor",name:"Lenjerie pat"},
+{cat:"Casnice",sub:"Dormitor",name:"Cearsaf elastic"},
+{cat:"Casnice",sub:"Dormitor",name:"Fata perna"},
+{cat:"Casnice",sub:"Dormitor",name:"Pilota"},
+{cat:"Casnice",sub:"Dormitor",name:"Patura"},
+{cat:"Casnice",sub:"Dormitor",name:"Cuvertura"},
+{cat:"Casnice",sub:"Dormitor",name:"Perna decorativa"},
+{cat:"Casnice",sub:"Dormitor",name:"Protectie saltea"},
+{cat:"Casnice",sub:"Dormitor",name:"Masca dormit"},
+{cat:"Casnice",sub:"Dormitor",name:"Draperii"},
+
+
+/* Decor */
+
+{cat:"Casnice",sub:"Decor",name:"Vaza flori"},
+{cat:"Casnice",sub:"Decor",name:"Rama foto"},
+{cat:"Casnice",sub:"Decor",name:"Ceas perete"},
+{cat:"Casnice",sub:"Decor",name:"Lumanari parfumate"},
+{cat:"Casnice",sub:"Decor",name:"Cutie depozitare"},
+{cat:"Casnice",sub:"Decor",name:"Organizator sertare"},
+{cat:"Casnice",sub:"Decor",name:"Ghiveci interior"},
+{cat:"Casnice",sub:"Decor",name:"Tablou decorativ"},
+{cat:"Casnice",sub:"Decor",name:"Oglinda perete"},
+{cat:"Casnice",sub:"Decor",name:"Suport reviste"},
+
+
+/* Siguranta */
+
+/* IMBRACAMINTE */
+
+/* Partea Superioara (Topuri) */
+
+{cat:"Imbracaminte",sub:"Topuri",name:"Tricou basic"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Tricou Polo"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Camasa eleganta"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Camasa casual flanela"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Top fara maneci"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Hanorac cu gluga"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Hanorac fara gluga"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Pulover pe gat"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Cardigan"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Helanca"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Maiou"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Bluza de corp"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Ie traditionala"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Corset decorativ"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Body"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Tunica"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Vesta tricotata"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Bolero"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Hanorac cu fermoar"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Bluza cu volane"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Crop top"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Camasa de in"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Pulover in V"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Poncho"},
+{cat:"Imbracaminte",sub:"Topuri",name:"Bluza spate gol"},
+
+
+/* Partea Inferioara */
+
+{cat:"Imbracaminte",sub:"Pantaloni si Fuste",name:"Blugi"},
+{cat:"Imbracaminte",sub:"Pantaloni si Fuste",name:"Pantaloni Chinos"},
+{cat:"Imbracaminte",sub:"Pantaloni si Fuste",name:"Pantaloni trening"},
+{cat:"Imbracaminte",sub:"Pantaloni si Fuste",name:"Colanti"},
+{cat:"Imbracaminte",sub:"Pantaloni si Fuste",name:"Pantaloni scurti"},
+{cat:"Imbracaminte",sub:"Pantaloni si Fuste",name:"Pantaloni stofa"},
+{cat:"Imbracaminte",sub:"Pantaloni si Fuste",name:"Fusta mini"},
+{cat:"Imbracaminte",sub:"Pantaloni si Fuste",name:"Fusta midi"},
+{cat:"Imbracaminte",sub:"Pantaloni si Fuste",name:"Fusta maxi"},
+{cat:"Imbracaminte",sub:"Pantaloni si Fuste",name:"Fusta creion"},
+{cat:"Imbracaminte",sub:"Pantaloni si Fuste",name:"Pantaloni cargo"},
+{cat:"Imbracaminte",sub:"Pantaloni si Fuste",name:"Salopeta denim"},
+{cat:"Imbracaminte",sub:"Pantaloni si Fuste",name:"Pantaloni evazati"},
+{cat:"Imbracaminte",sub:"Pantaloni si Fuste",name:"Bermude"},
+{cat:"Imbracaminte",sub:"Pantaloni si Fuste",name:"Pantaloni piele"},
+{cat:"Imbracaminte",sub:"Pantaloni si Fuste",name:"Fusta plisata"},
+{cat:"Imbracaminte",sub:"Pantaloni si Fuste",name:"Pantaloni culottes"},
+{cat:"Imbracaminte",sub:"Pantaloni si Fuste",name:"Trening complet"},
+{cat:"Imbracaminte",sub:"Pantaloni si Fuste",name:"Jupa"},
+{cat:"Imbracaminte",sub:"Pantaloni si Fuste",name:"Pantaloni pijama"},
+
+
+/* Exterior */
+
+{cat:"Imbracaminte",sub:"Jachete si Paltoane",name:"Geaca puf"},
+{cat:"Imbracaminte",sub:"Jachete si Paltoane",name:"Palton lana"},
+{cat:"Imbracaminte",sub:"Jachete si Paltoane",name:"Trench impermeabil"},
+{cat:"Imbracaminte",sub:"Jachete si Paltoane",name:"Geaca piele"},
+{cat:"Imbracaminte",sub:"Jachete si Paltoane",name:"Geaca blugi"},
+{cat:"Imbracaminte",sub:"Jachete si Paltoane",name:"Windbreaker"},
+{cat:"Imbracaminte",sub:"Jachete si Paltoane",name:"Bomber jacket"},
+{cat:"Imbracaminte",sub:"Jachete si Paltoane",name:"Sacou elegant"},
+{cat:"Imbracaminte",sub:"Jachete si Paltoane",name:"Blazer casual"},
+{cat:"Imbracaminte",sub:"Jachete si Paltoane",name:"Vesta matlasata"},
+{cat:"Imbracaminte",sub:"Jachete si Paltoane",name:"Geaca parka"},
+{cat:"Imbracaminte",sub:"Jachete si Paltoane",name:"Cojoc sintetic"},
+{cat:"Imbracaminte",sub:"Jachete si Paltoane",name:"Capa"},
+{cat:"Imbracaminte",sub:"Jachete si Paltoane",name:"Geaca schi"},
+{cat:"Imbracaminte",sub:"Jachete si Paltoane",name:"Mantou"},
+{cat:"Imbracaminte",sub:"Jachete si Paltoane",name:"Bolero seara"},
+{cat:"Imbracaminte",sub:"Jachete si Paltoane",name:"Geaca bomber"},
+{cat:"Imbracaminte",sub:"Jachete si Paltoane",name:"Hanorac polar"},
+{cat:"Imbracaminte",sub:"Jachete si Paltoane",name:"Pelerina ploaie"},
+{cat:"Imbracaminte",sub:"Jachete si Paltoane",name:"Jacheta denim"},
+
+
+/* Rochii si Costume */
+
+{cat:"Imbracaminte",sub:"Rochii si Costume",name:"Rochie zi"},
+{cat:"Imbracaminte",sub:"Rochii si Costume",name:"Rochie seara"},
+{cat:"Imbracaminte",sub:"Rochii si Costume",name:"Rochie office"},
+{cat:"Imbracaminte",sub:"Rochii si Costume",name:"Rochie cocktail"},
+{cat:"Imbracaminte",sub:"Rochii si Costume",name:"Rochie tip camasa"},
+{cat:"Imbracaminte",sub:"Rochii si Costume",name:"Costum barbatesc"},
+{cat:"Imbracaminte",sub:"Rochii si Costume",name:"Tailleur dama"},
+{cat:"Imbracaminte",sub:"Rochii si Costume",name:"Rochie vara"},
+{cat:"Imbracaminte",sub:"Rochii si Costume",name:"Salopeta eleganta"},
+{cat:"Imbracaminte",sub:"Rochii si Costume",name:"Rochie tricotata"},
+
+
+/* Lenjerie */
+
+{cat:"Imbracaminte",sub:"Lenjerie",name:"Boxeri"},
+{cat:"Imbracaminte",sub:"Lenjerie",name:"Slip"},
+{cat:"Imbracaminte",sub:"Lenjerie",name:"Sutien"},
+{cat:"Imbracaminte",sub:"Lenjerie",name:"Bustiera sport"},
+{cat:"Imbracaminte",sub:"Lenjerie",name:"Halat baie"},
+{cat:"Imbracaminte",sub:"Lenjerie",name:"Camasa noapte"},
+{cat:"Imbracaminte",sub:"Lenjerie",name:"Pijama satin"},
+{cat:"Imbracaminte",sub:"Lenjerie",name:"Ciorapi lungi"},
+{cat:"Imbracaminte",sub:"Lenjerie",name:"Sosete sport"},
+{cat:"Imbracaminte",sub:"Lenjerie",name:"Sosete lana"},
+
+
+/* Accesorii */
+
+{cat:"Imbracaminte",sub:"Accesorii",name:"Caciula iarna"},
+{cat:"Imbracaminte",sub:"Accesorii",name:"Sapca baseball"},
+{cat:"Imbracaminte",sub:"Accesorii",name:"Palaria soare"},
+{cat:"Imbracaminte",sub:"Accesorii",name:"Fular"},
+{cat:"Imbracaminte",sub:"Accesorii",name:"Esarfa matase"},
+{cat:"Imbracaminte",sub:"Accesorii",name:"Manusi piele"},
+{cat:"Imbracaminte",sub:"Accesorii",name:"Manusi iarna"},
+{cat:"Imbracaminte",sub:"Accesorii",name:"Curea piele"},
+{cat:"Imbracaminte",sub:"Accesorii",name:"Cravata"},
+{cat:"Imbracaminte",sub:"Accesorii",name:"Papion"},
+
+
+/* Costume baie */
+
+{cat:"Imbracaminte",sub:"Costume Baie si Sport",name:"Costum baie intreg"},
+{cat:"Imbracaminte",sub:"Costume Baie si Sport",name:"Bikini"},
+{cat:"Imbracaminte",sub:"Costume Baie si Sport",name:"Slip baie"},
+{cat:"Imbracaminte",sub:"Costume Baie si Sport",name:"Pantaloni inot"},
+{cat:"Imbracaminte",sub:"Costume Baie si Sport",name:"Echipament compresie"}
+
+/* ELECTRONICE */
+
+/* Telefoane si Comunicare */
+
+{cat:"Electronice",sub:"Telefoane si Comunicare",name:"Smartphone"},
+{cat:"Electronice",sub:"Telefoane si Comunicare",name:"Telefon pliabil"},
+{cat:"Electronice",sub:"Telefoane si Comunicare",name:"Smartwatch"},
+{cat:"Electronice",sub:"Telefoane si Comunicare",name:"Bratara fitness"},
+{cat:"Electronice",sub:"Telefoane si Comunicare",name:"Casti True Wireless"},
+{cat:"Electronice",sub:"Telefoane si Comunicare",name:"Casti Noise Cancelling"},
+{cat:"Electronice",sub:"Telefoane si Comunicare",name:"Walkie Talkie"},
+{cat:"Electronice",sub:"Telefoane si Comunicare",name:"Telefon fix DECT"},
+{cat:"Electronice",sub:"Telefoane si Comunicare",name:"Incarcator wireless"},
+{cat:"Electronice",sub:"Telefoane si Comunicare",name:"Power bank"},
+{cat:"Electronice",sub:"Telefoane si Comunicare",name:"Adaptor USB C"},
+{cat:"Electronice",sub:"Telefoane si Comunicare",name:"Trepied smartphone"},
+{cat:"Electronice",sub:"Telefoane si Comunicare",name:"Gimbal stabilizator"},
+{cat:"Electronice",sub:"Telefoane si Comunicare",name:"Boxa portabila Bluetooth"},
+{cat:"Electronice",sub:"Telefoane si Comunicare",name:"Amplificator semnal GSM"},
+
+
+/* Calculatoare si Laptopuri */
+
+{cat:"Electronice",sub:"Calculatoare si Laptopuri",name:"Laptop ultraportabil"},
+{cat:"Electronice",sub:"Calculatoare si Laptopuri",name:"Laptop gaming"},
+{cat:"Electronice",sub:"Calculatoare si Laptopuri",name:"Desktop PC"},
+{cat:"Electronice",sub:"Calculatoare si Laptopuri",name:"Monitor LED"},
+{cat:"Electronice",sub:"Calculatoare si Laptopuri",name:"Tastatura mecanica"},
+{cat:"Electronice",sub:"Calculatoare si Laptopuri",name:"Mouse optic"},
+{cat:"Electronice",sub:"Calculatoare si Laptopuri",name:"Tableta grafica"},
+{cat:"Electronice",sub:"Calculatoare si Laptopuri",name:"Hard disk extern"},
+{cat:"Electronice",sub:"Calculatoare si Laptopuri",name:"SSD portabil"},
+{cat:"Electronice",sub:"Calculatoare si Laptopuri",name:"Router WiFi 6"},
+{cat:"Electronice",sub:"Calculatoare si Laptopuri",name:"Memory stick USB"},
+{cat:"Electronice",sub:"Calculatoare si Laptopuri",name:"Camera web HD"},
+{cat:"Electronice",sub:"Calculatoare si Laptopuri",name:"Microfon USB"},
+{cat:"Electronice",sub:"Calculatoare si Laptopuri",name:"Boxe PC"},
+{cat:"Electronice",sub:"Calculatoare si Laptopuri",name:"Imprimanta multifunctionala"},
+{cat:"Electronice",sub:"Calculatoare si Laptopuri",name:"Scanner portabil"},
+{cat:"Electronice",sub:"Calculatoare si Laptopuri",name:"UPS"},
+{cat:"Electronice",sub:"Calculatoare si Laptopuri",name:"Docking station"},
+{cat:"Electronice",sub:"Calculatoare si Laptopuri",name:"Placa video"},
+{cat:"Electronice",sub:"Calculatoare si Laptopuri",name:"Cooler laptop"},
+
+
+/* Foto Video si Divertisment */
+
+{cat:"Electronice",sub:"Foto Video si Divertisment",name:"Aparat foto mirrorless"},
+{cat:"Electronice",sub:"Foto Video si Divertisment",name:"Aparat foto DSLR"},
+{cat:"Electronice",sub:"Foto Video si Divertisment",name:"Camera actiune"},
+{cat:"Electronice",sub:"Foto Video si Divertisment",name:"Drona cu camera"},
+{cat:"Electronice",sub:"Foto Video si Divertisment",name:"Consola jocuri"},
+{cat:"Electronice",sub:"Foto Video si Divertisment",name:"Consola portabila"},
+{cat:"Electronice",sub:"Foto Video si Divertisment",name:"Ochelari VR"},
+{cat:"Electronice",sub:"Foto Video si Divertisment",name:"Proiector video"},
+{cat:"Electronice",sub:"Foto Video si Divertisment",name:"Ecran proiectie"},
+{cat:"Electronice",sub:"Foto Video si Divertisment",name:"Player streaming"},
+{cat:"Electronice",sub:"Foto Video si Divertisment",name:"Rama foto digitala"},
+{cat:"Electronice",sub:"Foto Video si Divertisment",name:"Reportofon digital"},
+{cat:"Electronice",sub:"Foto Video si Divertisment",name:"Binoclu vedere nocturna"},
+{cat:"Electronice",sub:"Foto Video si Divertisment",name:"Card memorie SD"},
+{cat:"Electronice",sub:"Foto Video si Divertisment",name:"Controller jocuri"},
+
+
+/* Televizoare si Audio */
+
+{cat:"Electronice",sub:"Televizoare si Audio",name:"Smart TV 4K"},
+{cat:"Electronice",sub:"Televizoare si Audio",name:"Soundbar"},
+{cat:"Electronice",sub:"Televizoare si Audio",name:"Home cinema"},
+{cat:"Electronice",sub:"Televizoare si Audio",name:"Pickup vinil"},
+{cat:"Electronice",sub:"Televizoare si Audio",name:"Amplificator audio"},
+{cat:"Electronice",sub:"Televizoare si Audio",name:"Subwoofer activ"},
+{cat:"Electronice",sub:"Televizoare si Audio",name:"Receiver AV"},
+{cat:"Electronice",sub:"Televizoare si Audio",name:"Casti HiFi"},
+{cat:"Electronice",sub:"Televizoare si Audio",name:"Player Bluray"},
+{cat:"Electronice",sub:"Televizoare si Audio",name:"Boxe raft"},
+{cat:"Electronice",sub:"Televizoare si Audio",name:"Transmitator Bluetooth"},
+{cat:"Electronice",sub:"Televizoare si Audio",name:"Telecomanda universala"},
+{cat:"Electronice",sub:"Televizoare si Audio",name:"Antena TV digitala"},
+{cat:"Electronice",sub:"Televizoare si Audio",name:"Mixer audio"},
+{cat:"Electronice",sub:"Televizoare si Audio",name:"Casti studio"},
+
+
+/* Electrocasnice */
+
+{cat:"Electronice",sub:"Electrocasnice",name:"Frigider smart"},
+{cat:"Electronice",sub:"Electrocasnice",name:"Masina spalat rufe"},
+{cat:"Electronice",sub:"Electrocasnice",name:"Uscator rufe"},
+{cat:"Electronice",sub:"Electrocasnice",name:"Masina spalat vase"},
+{cat:"Electronice",sub:"Electrocasnice",name:"Cuptor microunde"},
+{cat:"Electronice",sub:"Electrocasnice",name:"Air fryer"},
+{cat:"Electronice",sub:"Electrocasnice",name:"Robot bucatarie"},
+{cat:"Electronice",sub:"Electrocasnice",name:"Espressor cafea"},
+{cat:"Electronice",sub:"Electrocasnice",name:"Blender vertical"},
+{cat:"Electronice",sub:"Electrocasnice",name:"Mixer bol"},
+{cat:"Electronice",sub:"Electrocasnice",name:"Prajitor paine"},
+{cat:"Electronice",sub:"Electrocasnice",name:"Fierbator apa"},
+{cat:"Electronice",sub:"Electrocasnice",name:"Sandwich maker"},
+{cat:"Electronice",sub:"Electrocasnice",name:"Aspirator robot"},
+{cat:"Electronice",sub:"Electrocasnice",name:"Aspirator vertical"},
+{cat:"Electronice",sub:"Electrocasnice",name:"Fier calcat"},
+{cat:"Electronice",sub:"Electrocasnice",name:"Statie calcat"},
+{cat:"Electronice",sub:"Electrocasnice",name:"Plita inductie"},
+{cat:"Electronice",sub:"Electrocasnice",name:"Hota telescopica"},
+{cat:"Electronice",sub:"Electrocasnice",name:"Masina paine"},
+
+
+/* Ingrijire personala */
+
+{cat:"Electronice",sub:"Ingrijire Personala",name:"Periuta dinti electrica"},
+{cat:"Electronice",sub:"Ingrijire Personala",name:"Irigator bucal"},
+{cat:"Electronice",sub:"Ingrijire Personala",name:"Uscator par"},
+{cat:"Electronice",sub:"Ingrijire Personala",name:"Placa par"},
+{cat:"Electronice",sub:"Ingrijire Personala",name:"Masina tuns"},
+{cat:"Electronice",sub:"Ingrijire Personala",name:"Epilator IPL"},
+{cat:"Electronice",sub:"Ingrijire Personala",name:"Cantar corporal smart"},
+{cat:"Electronice",sub:"Ingrijire Personala",name:"Tensiometru digital"},
+{cat:"Electronice",sub:"Ingrijire Personala",name:"Termometru infrarosu"},
+{cat:"Electronice",sub:"Ingrijire Personala",name:"Purificator aer"},
+
+
+/* Smart Home */
+
+{cat:"Electronice",sub:"Smart Home",name:"Termostat inteligent"},
+{cat:"Electronice",sub:"Smart Home",name:"Camera supraveghere WiFi"},
+{cat:"Electronice",sub:"Smart Home",name:"Incuietoare smart"},
+{cat:"Electronice",sub:"Smart Home",name:"Senzor fum gaz smart"},
+{cat:"Electronice",sub:"Smart Home",name:"Prize inteligente"}
+
+]
+
+function signup(){
+  const user = document.getElementById("signUser").value.trim()
+  const pass = document.getElementById("signPass").value.trim()
+
+  if(!user || !pass){
+    alert("Completează toate câmpurile")
+    return
+  }
+
+  if(localStorage.getItem("user_"+user)){
+    alert("Utilizatorul există deja")
+    return
+  }
+
+  localStorage.setItem("user_"+user, pass)
+  alert("Cont creat! Te autentificăm...")
+  loginUser(user)
+}
+
+function login(){
+  const user = document.getElementById("loginUser").value.trim()
+  const pass = document.getElementById("loginPass").value.trim()
+  if(!user || !pass){
+    alert("Completează toate câmpurile")
+    return
+  }
+
+  const stored = localStorage.getItem("user_"+user)
+  if(stored && stored === pass){
+    loginUser(user)
+    return
+  }
+
+  alert("Username sau parolă incorectă")
+}
+
+function loginUser(user){
+  currentUser = user
+  document.getElementById("auth").style.display = "none"
+  document.getElementById("shop").style.display = "block"
+  document.getElementById("welcome").innerText = "Bine ai venit " + user
+  loadCategories()
+  showProducts(true)
+}
+
+function loadCategories(){
+  let cats = [...new Set(products.map(p=>p.cat))].sort()
+  cats.unshift("Toate")
+
+  const select = document.getElementById("categorySelect")
+  select.innerHTML = ""
+  cats.forEach(c=>{
+    select.innerHTML += `<option>${c}</option>`
+  })
+
+  loadSubcategories()
+}
+
+function loadSubcategories(){
+  const cat = document.getElementById("categorySelect").value
+  const select = document.getElementById("subSelect")
+
+  if(cat === "Toate"){
+    select.innerHTML = `<option>Toate</option>`
+    select.disabled = true
+    showProducts(true)
+    return
+  }
+
+  select.disabled = false
+  let subs = [...new Set(products.filter(p=>p.cat===cat).map(p=>p.sub))].sort()
+  subs.unshift("Toate")
+
+  select.innerHTML = ""
+  subs.forEach(s=>{
+    select.innerHTML += `<option>${s}</option>`
+  })
+
+  showProducts()
+}
+
+function showProducts(forceAll=false){
+  const cat = document.getElementById("categorySelect").value
+  const sub = document.getElementById("subSelect").value
+
+  let list = products
+  if(!forceAll){
+    if(cat !== "Toate"){
+      list = list.filter(p=>p.cat===cat)
+      if(sub && sub !== "Toate"){
+        list = list.filter(p=>p.sub===sub)
+      }
+    }
+  }
+
+  renderProducts(list)
+}
+
+function renderProducts(list){
+  const div = document.getElementById("products")
+  div.innerHTML = ""
+
+  if(list.length === 0){
+    div.innerHTML = "<p>Nu există produse pentru acest filtru.</p>"
+    return
+  }
+
+  list.forEach(p=>{
+    div.innerHTML += `
+      <div class="product">
+        <span><b>${p.name}</b></span>
+        <button onclick="buy('${p.name}','${p.cat}','${p.sub}')">Buy</button>
+      </div>
+    `
+  })
+}
+
+function searchProduct(){
+  const text = document.getElementById("search").value.toLowerCase()
+  const list = products.filter(p=>p.name.toLowerCase().includes(text))
+  renderProducts(list)
+}
+
+function buy(name,cat,sub){
+  const key = "data_" + currentUser
+  const data = JSON.parse(localStorage.getItem(key)) || []
+  data.push({name,cat,sub})
+  localStorage.setItem(key,JSON.stringify(data))
+
+  recommendGeneral(cat,sub)
+  recommendUsers(name,cat,sub)
+}
+
+function recommendGeneral(cat,sub){
+  const rec = products.filter(p=>p.cat===cat && p.sub===sub)
+  const div = document.getElementById("generalRec")
+  div.innerHTML = ""
+  rec.slice(0,3).forEach(p=>{
+    div.innerHTML += `<div class="product recommend">${p.name}</div>`
+  })
+}
+
+function recommendUsers(product, cat, sub){
+  const counts = {}
+  for(let i=1;i<=DEMO_USER_COUNT;i++){
+    const u = "user"+i
+    const data = JSON.parse(localStorage.getItem("data_"+u)) || []
+    data.forEach(p=>{
+      if(p.name !== product && p.cat === cat && p.sub === sub){
+        counts[p.name] = (counts[p.name]||0) + 1
+      }
+    })
+  }
+
+  const sorted = Object.keys(counts).sort((a,b)=>counts[b]-counts[a])
+  const div = document.getElementById("userRec")
+  div.innerHTML = ""
+  sorted.slice(0,3).forEach(p=>{
+    div.innerHTML += `<div class="product recommend">${p}</div>`
+  })
+}
+
+window.addEventListener("DOMContentLoaded", ()=>{
+  initDemoUsers()
+})
+</script>
+</body>
+</html>
