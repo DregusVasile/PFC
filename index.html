@@ -118,7 +118,7 @@ const DEMO_USER_PASS = "pass"
 
 function initDemoUsers(){
   for(let i=1;i<=DEMO_USER_COUNT;i++){
-    let key = "user_user"+i
+    let key = "user"+i
     if(!localStorage.getItem(key)){
       localStorage.setItem(key, DEMO_USER_PASS)
     }
@@ -379,7 +379,7 @@ const products=[
 {cat:"Imbracaminte",sub:"Costume Baie si Sport",name:"Bikini"},
 {cat:"Imbracaminte",sub:"Costume Baie si Sport",name:"Slip baie"},
 {cat:"Imbracaminte",sub:"Costume Baie si Sport",name:"Pantaloni inot"},
-{cat:"Imbracaminte",sub:"Costume Baie si Sport",name:"Echipament compresie"}
+{cat:"Imbracaminte",sub:"Costume Baie si Sport",name:"Echipament compresie"},
 
 /* ELECTRONICE */
 
@@ -521,12 +521,12 @@ function signup(){
     return
   }
 
-  if(localStorage.getItem("user_"+user)){
+  if(localStorage.getItem("user"+user)){
     alert("Utilizatorul există deja")
     return
   }
 
-  localStorage.setItem("user_"+user, pass)
+  localStorage.setItem("user"+user, pass)
   alert("Cont creat! Te autentificăm...")
   loginUser(user)
 }
@@ -539,7 +539,7 @@ function login(){
     return
   }
 
-  const stored = localStorage.getItem("user_"+user)
+  const stored = localStorage.getItem("user"+user)
   if(stored && stored === pass){
     loginUser(user)
     return
