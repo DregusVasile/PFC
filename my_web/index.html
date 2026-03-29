@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TestShop</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="main">
+
+  <!-- LEFT 60% -->
+  <div class="left">
+
+    <div class="character big" id="char1">
+      <div class="eye"></div>
+      <div class="eye"></div>
+    </div>
+
+    <div class="character mid" id="char2">
+      <div class="eye"></div>
+      <div class="eye"></div>
+    </div>
+
+    <div class="character small" id="char3">
+      <div class="eye"></div>
+      <div class="eye"></div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT 40% -->
+  <div class="right">
+
+    <div class="login-box" id="loginBox">
+
+      <h1>Welcome back!</h1>
+
+      <input id="loginUser" placeholder="Username">
+
+      <div class="password-box">
+        <input id="loginPass" type="password" placeholder="Password">
+        <span onclick="togglePassword('loginPass')">👁</span>
+      </div>
+
+      <button onclick="login()">Log In</button>
+
+      <p class="switch">
+        Don't have an account?
+        <span onclick="showSignup()">Sign Up</span>
+      </p>
+
+    </div>
+
+    <!-- SIGNUP -->
+    <div id="signupBox" class="login-box" style="display:none">
+
+      <input id="signUser" placeholder="Username">
+
+      <div class="password-box">
+        <input id="signPass" type="password" placeholder="Password">
+        <span onclick="togglePassword('signPass')">👁</span>
+      </div>
+
+      <div class="password-box">
+        <input id="confirmPass" type="password" placeholder="Confirm Password">
+        
+      </div>
+
+      <button onclick="signup()">Sign Up</button>
+
+      <p class="switch">
+        Already have an account?
+        <span onclick="showLogin()">Log In</span>
+      </p>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

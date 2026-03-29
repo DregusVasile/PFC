@@ -1,0 +1,113 @@
+body{
+margin:0;
+font-family:Arial;
+overflow:hidden;
+}
+
+.main{
+display:flex;
+height:100vh;
+}
+
+/* LEFT */
+.left{
+width:60%;
+display:flex;
+justify-content:center;
+align-items:center;
+gap:40px;
+background:#eee;
+}
+
+/* CHARACTERS */
+.character{
+position:relative;
+border-radius:20px;
+}
+
+.big{
+width:150px;
+height:240px;
+background:linear-gradient(purple,blue);
+}
+
+.mid{
+width:110px;
+height:180px;
+background:linear-gradient(rgb(189, 160, 81),rgb(41, 9, 145));
+}
+
+.small{
+width:90px;
+height:140px;
+background:linear-gradient(rgb(127, 14, 91),rgb(0, 0, 0));
+border-radius:60px 60px 20px 20px;
+}
+
+/* EYES */
+.eye{
+width:14px;
+height:14px;
+background:radial-gradient( rgb(255, 254, 254),20px, transparent 1px);
+border-radius:50%;
+position:absolute;
+top:50px;
+}
+
+.eye:nth-child(1){ left:30px; }
+.eye:nth-child(2){ right:30px; }
+
+/* RIGHT */
+.right{
+width:40%;
+display:flex;
+justify-content:center;
+align-items:center;
+background:white;
+}
+
+.login-box{
+width:80%;
+text-align:center;
+}
+
+input{
+width:100%;
+padding:12px;
+margin:10px 0;
+border:none;
+border-bottom:1px solid #ccc;
+}
+
+.password-box{
+position:relative;
+}
+
+.password-box span{
+position:absolute;
+right:10px;
+top:12px;
+cursor:pointer;
+}
+
+button{
+width:100%;
+padding:12px;
+background:black;
+color:white;
+border:none;
+border-radius:25px;
+margin-top:10px;
+cursor:pointer;
+}
+
+.switch span{
+color:blue;
+cursor:pointer;
+}
+
+/* MOBILE */
+@media(max-width:800px){
+.left{display:none;}
+.right{width:100%;}
+}
