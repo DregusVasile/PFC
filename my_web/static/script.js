@@ -98,7 +98,7 @@ const saved = localStorage.getItem("user_"+u)
 
 if(saved === p){
 localStorage.setItem("currentUser", u) // 🔥 IMPORTANT
-window.location.href = "shop.html"
+window.location.href = "/shop"
 }else{
 alert("Wrong credentials")
 }

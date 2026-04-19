@@ -1,148 +1,124 @@
-document.addEventListener("DOMContentLoaded", ()=>{
+document.addEventListener("DOMContentLoaded", () => {
 
-const CURRENCY = "RON"
+const CURRENCY = "RON";
+const PRODUCTS_PER_PAGE = 42;
 
-const productsDiv = document.getElementById("products")
-const searchInput = document.getElementById("search")
-const cartCount = document.getElementById("cartCount")
-const username = document.getElementById("username")
+const productsDiv = document.getElementById("products");
+const categoryList = document.getElementById("categoryList");
+const cartCount = document.getElementById("cartCount");
+const username = document.getElementById("username");
 
-username.innerText = localStorage.getItem("currentUser") || "Guest"
+username.innerText = localStorage.getItem("currentUser") || "Guest";
 
-/* PRODUSE */
-let products = [
-{
-name:"Phone",
-price:1500,
-cat:"Electronics",
-img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvP9ILf5sFBTv5C2PxocHhNPBVL0qX2XzXdA&s"
-},
-{
-name:"Sneakers",
-price:500,
-cat:"Clothing",
-img:"https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcQzhT58jSwR0taqgXGBasuUDidQgdBCTZEKmLH7GVxNr--eU2wanZwzhMlZi_GBJ0ZHGnBTyeod79ZVw6KTmWbo736k4SJ0Tdk3romdz-3tUvxgQASOt31NES57wWFgnARXDvaPppz8P0s&usqp=CAc"
-},
-{
-name:"Headphones",
-price:320,
-cat:"Electronics",
-img:"https://sony.scene7.com/is/image/sonyglobalsolutions/Headphones_Product-finder_WH-1000XM6?$productFinder$&fmt=png-alpha"
-},
-{
-name:"Chairs",
-price:40,
-cat:"Home",
-img:"https://store.ashleyfurniture.ph/cdn/shop/files/D974-01-ANGLE-ALT-SW.jpg?v=1757064513"
-},
-{
-name:"Watch",
-price:300,
-cat:"Electronics",
-img:"https://www.sonatawatches.in/dw/image/v2/BKDD_PRD/on/demandware.static/-/Sites-titan-master-catalog/default/dw7b993993/images/Sonata/Catalog/7152QM01_1.jpg?sw=600&sh=600"
-},
-{name:"Jacket",
-price:150,
-cat:"Clothing",
-img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUjL7jlnPo6GVI-81B3BNl1OqBvJEhEdUzJQ&s"
-}
-]
+let allProducts = [];
+let filteredProducts = [];
+let currentPage = 1;
+let currentCategory = "All";
 
-window.openCart = function(){
-const box = document.getElementById("cartBox")
-const items = document.getElementById("cartItems")
+/* ================= LOAD JSON ================= */
+async function loadAllProducts() {
+  try {
+    const res = await fetch("/products-json");
+    allProducts = await res.json();
 
-box.style.display = box.style.display === "none" ? "block" : "none"
-
-items.innerHTML=""
-
-cart.forEach(p=>{
-items.innerHTML += `
-<p>${p.name} - ${p.price} ${CURRENCY}</p>
-`
-})
-}
-let selectedCategory = "All"
-const categories = ["All", ...new Set(products.map(p=>p.cat))]
-const categoryList = document.getElementById("categoryList")
-const categoryBtn = document.getElementById("categoryBtn")
-
-categories.forEach(c=>{
-    const div = document.createElement("div")
-    div.innerText = c
-
-    div.onclick = ()=>{
-        selectedCategory = c
-        categoryBtn.innerText = c === "All" ? "Categories ▼" : c + " ▼"
-        categoryList.style.display = "none"
-        filterProducts()
-    }
-
-    categoryList.appendChild(div)
-})
-window.toggleCategories = function(){
-    categoryList.style.display =
-        categoryList.style.display === "flex" ? "none" : "flex"
-}
-function filterProducts(){
-    let filtered = products
-
-    if(selectedCategory !== "All"){
-        filtered = filtered.filter(p=>p.cat === selectedCategory)
-    }
-
-    const text = searchInput.value.toLowerCase()
-    filtered = filtered.filter(p=>p.name.toLowerCase().includes(text))
-
-    render(filtered)
+    setupCategories();
+    applyFilter("All");
+  } catch (err) {
+    console.error("Eroare la load JSON:", err);
+  }
 }
 
+/* ================= CATEGORIES ================= */
+function setupCategories() {
+  const categories = ["All", ...new Set(allProducts.map(p => p.category))];
 
+  categoryList.innerHTML = "";
 
-/* 🔥 GENEREAZĂ MULTE PRODUSE */
-for(let i=1;i<301;i++){
-products.push({
-name:"Product "+i,
-price:Math.floor(Math.random()*300+50),
-img:"https://picsum.photos/200?random="+i
-})
+  categories.forEach(cat => {
+    const div = document.createElement("div");
+    div.innerText = cat;
+    div.onclick = () => selectCategory(cat);
+    categoryList.appendChild(div);
+  });
 }
 
-/* RENDER */
-function render(list){
-productsDiv.innerHTML=""
-
-list.forEach(p=>{
-productsDiv.innerHTML+=`
-<div class="card">
-<img src="${p.img}">
-<h4>${p.name}</h4>
-
-<div class="bottom">
-<div class="price">${p.price} ${CURRENCY}</div>
-<button onclick="addToCart(${list.indexOf(p)})">Add</button>
-
-</div>
-
-</div>
-`
-})
+window.toggleCategories = function () {
+  categoryList.style.display =
+    categoryList.style.display === "block" ? "none" : "block";
 }
 
-/* SEARCH */
-window.search = function(){
-    filterProducts()
+function selectCategory(cat) {
+  currentCategory = cat;
+  currentPage = 1;
+  applyFilter(cat);
 }
 
-/* CART */
-{let cart = []
-window.addToCart = function(index){
-cart.push(products[index])
-cartCount.innerText = cart.length
-}
+function applyFilter(cat) {
+  if (cat === "All") {
+    filteredProducts = allProducts;
+  } else {
+    filteredProducts = allProducts.filter(p => p.category === cat);
+  }
+
+  loadPage(1);
+  updateArrows();
 }
 
-/* INIT */
-render(products)
+/* ================= PAGINATION ================= */
+function loadPage(page) {
+  const start = (page - 1) * PRODUCTS_PER_PAGE;
+  const end = start + PRODUCTS_PER_PAGE;
 
-})
+  const items = filteredProducts.slice(start, end);
+
+  renderProducts(items);
+}
+
+window.nextPage = function () {
+  const maxPage = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
+
+  if (currentPage < maxPage) {
+    currentPage++;
+    loadPage(currentPage);
+  }
+}
+
+window.prevPage = function () {
+  if (currentPage > 1) {
+    currentPage--;
+    loadPage(currentPage);
+  }
+}
+
+function updateArrows() {
+  const maxPage = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
+
+  document.querySelector(".left-btn").style.opacity = currentPage === 1 ? 0.3 : 1;
+  document.querySelector(".right-btn").style.opacity = currentPage === maxPage ? 0.3 : 1;
+}
+
+/* ================= RENDER ================= */
+function renderProducts(items) {
+  productsDiv.innerHTML = "";
+
+  items.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <img src="${p.image}" onerror="this.src='https://via.placeholder.com/150'">
+      <h4>${p.name}</h4>
+      <div class="bottom">
+        <div class="price">${p.price} ${CURRENCY}</div>
+        <button>Add</button>
+      </div>
+    `;
+
+    productsDiv.appendChild(card);
+  });
+}
+
+/* ================= INIT ================= */
+loadAllProducts();
+
+});
