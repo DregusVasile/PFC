@@ -1,0 +1,50 @@
+<h1>User Page</h1>
+
+<p id="user"></p>
+
+<h3>Add Product</h3>
+
+<input id="name" placeholder="Product name">
+<input id="price" placeholder="Price">
+<input id="image" placeholder="Image URL">
+<input id="category" placeholder="Category">
+<input id="desc" placeholder="Description (max 300 chars)">
+<input id="name">
+<input id="price">
+<input id="image">
+<input id="category">
+<input id="subcategory" placeholder="Subcategory">
+
+<button onclick="addProducts()">Add</button>
+
+<script>
+document.getElementById("user").innerText =
+  localStorage.getItem("currentUser") || "Guest";
+
+
+  async function addProducts(){
+  const products = {
+  name: document.getElementById("name").value,
+  price: document.getElementById("price").value,
+  image: document.getElementById("image").value,
+  category: document.getElementById("category").value,
+  subcategory: document.getElementById("subcategory").value
+};
+
+  const res = await fetch("/add-product", {
+    method:"POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(products)
+  });
+
+  const data = await res.json();
+
+  if(data.status === "ok"){
+    alert("Product added!");
+    window.location.href = "/shop"; // 🔥 vezi imediat produsul
+  } else {
+    alert("Error adding product");
+  }
+}
+</script>
+<script src="{{ url_for('static', filename='cart.js') }}"></script>
