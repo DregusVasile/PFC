@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Product</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='product.css') }}">
+</head>
+<script src="{{ url_for('static', filename='cart.js') }}"></script>
+<body>
+    <div class="topbar">
+  <h2>TestShop</h2>
+
+  <div style="float:right">
+    <span id="username" onclick="goProfile()" style="cursor:pointer"></span>
+    🛒 <span id="cartCount">0</span>
+  </div>
+
+</div>
+
+<div class="container">
+
+  <!-- LEFT -->
+  <div class="left">
+    <img id="img" onerror="this.src='https://via.placeholder.com/400'">
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <h1 id="name"></h1>
+
+    <div class="stars" id="stars"></div>
+    <p id="ratingCount"></p>
+
+    <div class="price" id="price"></div>
+
+   <button onclick="addCurrentProduct()">Add</button>
+
+    <div class="section">
+      <h3>Seller</h3>
+      <p id="seller"></p>
+      <p id="contact"></p>
+      <p id="location"></p>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- DESCRIPTION -->
+<div class="section">
+  <h3>Description</h3>
+  <p id="desc"></p>
+</div>
+
+<!-- COMMENTS -->
+<div class="section">
+  <h3>Comments</h3>
+  <textarea id="commentInput" placeholder="Write your comment here..."></textarea>
+  <button onclick="addComment()">Add Comment</button>
+
+  <div id="comments"></div>
+</div>
+
+<!-- RECOMMENDED -->
+<div class="section">
+  <h3>Recommended Products</h3>
+  <div class="recommended-container">
+    <button class="carousel-nav-btn" id="prevBtn" onclick="prevRecommended()">❮</button>
+    <div class="recommended-carousel" id="recommended"></div>
+    <button class="carousel-nav-btn" id="nextBtn" onclick="nextRecommended()">❯</button>
+  </div>
+</div>
+
+<footer>
+  <div>
+    <h3>Location</h3>
+    <p>42 Maple Street</p>
+    <p>Portland, OR 97201</p>
+  </div>
+  <div>
+    <h3>Connect</h3>
+    <p>hello@testshop.com</p>
+    <p>(503) 555-0172</p>
+  </div>
+  <p class="copy">© 2026 TestShop. All rights reserved.</p>
+</footer>
+
+<script>
+const product = JSON.parse(localStorage.getItem("selectedProduct"));
+const user = localStorage.getItem("currentUser") || "Guest";
+
+document.getElementById("username").innerText = user;
+
+// Track product view
+if(product) {
+  fetch("/track-view", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      productId: product.id,
+      user: user
+    })
+  });
+}
+
+if(product){
+  document.getElementById("name").innerText = product.name;
+  document.getElementById("price").innerText = product.price + " RON";
+  document.getElementById("img").src = product.image;
+
+  document.getElementById("seller").innerText = user;
+  document.getElementById("contact").innerText = "email@test.com | 0712345678";
+  document.getElementById("location").innerText = "Romania";
+
+  document.getElementById("desc").innerText =
+    product.description || "No description provided";
+}
+
+/* ⭐ RATING - SERVER SIDE */
+async function loadRatings() {
+  const res = await fetch("/get-ratings");
+  const ratings = await res.json();
+  renderStars(ratings);
+}
+
+async function renderStars(ratings) {
+  const starsDiv = document.getElementById("stars");
+  starsDiv.innerHTML = "";
+
+  const productIdStr = String(product.id);
+  let avg = 0;
+  let count = 0;
+
+  if(ratings[productIdStr]) {
+    const productRating = ratings[productIdStr];
+    if(productRating.count > 0) {
+      avg = productRating.total / productRating.count;
+      count = productRating.count;
+    }
+  }
+
+  for(let i = 1; i <= 5; i++) {
+    const s = document.createElement("span");
+    s.innerText = i <= Math.round(avg) ? "⭐" : "☆";
+    s.onclick = () => rate(i);
+    starsDiv.appendChild(s);
+  }
+
+  document.getElementById("ratingCount").innerText =
+    "Ratings: " + count + " | Avg: " + avg.toFixed(1);
+}
+
+async function rate(val) {
+  await fetch("/rate", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      productId: product.id,
+      user: user,
+      value: val
+    })
+  });
+
+  loadRatings();
+}
+
+loadRatings();
+
+/* COMMENTS */
+async function addComment(){
+  const text = document.getElementById("commentInput").value.trim();
+
+  if(!text) {
+    alert("Please write a comment!");
+    return;
+  }
+
+  const res = await fetch("/add-comment", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      user:user,
+      product:product.name,
+      text:text
+    })
+  });
+
+  const result = await res.json();
+  
+  if(result.status === "limit") {
+    alert("You have reached the limit of 30 comments per product!");
+  } else {
+    document.getElementById("commentInput").value = "";
+    loadComments();
+  }
+}
+
+async function loadComments(){
+  const res = await fetch("/comments");
+  const all = await res.json();
+
+  const list = all.filter(c => c.product === product.name);
+  renderComments(list);
+}
+
+async function deleteComment(id){
+  if(!confirm("Are you sure you want to delete this comment?")) return;
+
+  const res = await fetch("/delete-comment", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      id:id,
+      user:user
+    })
+  });
+
+  const result = await res.json();
+  if(result.status === "unauthorized") {
+    alert("You can only delete your own comments!");
+  } else {
+    loadComments();
+  }
+}
+
+async function editComment(id, currentText){
+  const newText = prompt("Edit comment:", currentText);
+
+  if(newText === null || newText.trim() === "") return;
+
+  const res = await fetch("/edit-comment", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      id:id,
+      user:user,
+      text:newText.trim()
+    })
+  });
+
+  const result = await res.json();
+  if(result.status === "unauthorized") {
+    alert("You can only edit your own comments!");
+  } else {
+    loadComments();
+  }
+}
+
+function renderComments(list){
+  const box = document.getElementById("comments");
+  box.innerHTML = "";
+
+  const isAdmin = localStorage.getItem("currentUserIsAdmin") === "true";
+
+  list.forEach(c=>{
+    const canEdit = c.user === user;
+    const canDelete = c.user === user || isAdmin;
+
+    const div = document.createElement("div");
+    div.className = "comment";
+
+    let editedTag = c.edited ? `<span class="comment-edited">(edited)</span>` : "";
+    const menuHtml = (canEdit || canDelete) ? `
+      <button class="comment-menu-btn" onclick="toggleMenu(${c.id})">⋮</button>
+      <div class="comment-menu" id="menu-${c.id}" style="display:none">
+        ${canEdit ? `<button onclick="editComment(${c.id}, \`${c.text.replace(/`/g, '\`')}\`)">Edit</button>` : ""}
+        ${canDelete ? `<button onclick="deleteComment(${c.id})">Delete</button>` : ""}
+      </div>
+    ` : "";
+
+    div.innerHTML = `
+      <div class="comment-header">
+        <span class="comment-user">${c.user}</span>
+        <span class="comment-time">${new Date(c.timestamp).toLocaleString()}</span>
+      </div>
+      <div class="comment-text">${c.text}</div>
+      ${editedTag}
+      ${menuHtml}
+    `;
+
+    box.appendChild(div);
+  });
+}
+
+function toggleMenu(id){
+  const el = document.getElementById("menu-" + id);
+  if(el) {
+    el.style.display = el.style.display === "none" ? "block" : "none";
+  }
+}
+
+loadComments();
+
+/* 🔁 RECOMMENDED CAROUSEL */
+let recommendedProducts = [];
+let recommendedIndex = 0;
+
+function getItemsPerView() {
+  const width = window.innerWidth;
+  if (width < 600) return 2;
+  if (width < 900) return 4;
+  return 5;
+}
+
+async function loadRecommended(){
+  const res = await fetch(`/get-recommended/${product.id}`);
+  const data = await res.json();
+  recommendedProducts = data.products;
+  renderRecommended();
+  updateCarouselButtons();
+}
+
+function renderRecommended() {
+  const box = document.getElementById("recommended");
+  box.innerHTML = "";
+
+  const end = Math.min(recommendedIndex + getItemsPerView(), recommendedProducts.length);
+
+  for(let i = recommendedIndex; i < end; i++) {
+    const p = recommendedProducts[i];
+    const div = document.createElement("div");
+    div.className = "card";
+
+    div.innerHTML = `
+      <img src="${p.image}" onerror="this.src='https://via.placeholder.com/150'">
+      <div class="card-name">${p.name}</div>
+      <div class="card-price">${p.price} RON</div>
+    `;
+
+    div.onclick = () => {
+      localStorage.setItem("selectedProduct", JSON.stringify(p));
+      location.reload();
+    };
+
+    box.appendChild(div);
+  }
+}
+
+function updateCarouselButtons() {
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+
+  prevBtn.disabled = recommendedIndex === 0;
+  nextBtn.disabled = recommendedIndex + getItemsPerView() >= recommendedProducts.length;
+}
+
+window.prevRecommended = function() {
+  if(recommendedIndex > 0) {
+    recommendedIndex -= getItemsPerView();
+    if(recommendedIndex < 0) recommendedIndex = 0;
+    renderRecommended();
+    updateCarouselButtons();
+  }
+}
+
+window.nextRecommended = function() {
+  if(recommendedIndex + getItemsPerView() < recommendedProducts.length) {
+    recommendedIndex += getItemsPerView();
+    renderRecommended();
+    updateCarouselButtons();
+  }
+}
+
+loadRecommended();
+
+function goProfile(){
+  window.location.href = "/user";
+}
+
+async function addCurrentProduct(){
+  const response = await addToCart(product);
+  if (response && response.ok) {
+    await updateCartUI();
+  }
+}
+</script>
+
+
+</body>
+</html>
