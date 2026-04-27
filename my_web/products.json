@@ -1,0 +1,338 @@
+[
+  {
+    "id": 1,
+    "name": "Laptop Asus",
+    "price": 3000,
+    "category": "Electronics",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 2,
+    "name": "Telefon Samsung",
+    "price": 2000,
+    "category": "Electronics",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 3,
+    "name": "Televizor LG",
+    "price": 4000,
+    "category": "Electronics",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 4,
+    "name": "Frigider Whirlpool",
+    "price": 3500,
+    "category": "Appliances",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 5,
+    "name": "Masina de spalat Bosch",
+    "price": 2500,
+    "category": "Appliances",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 6,
+    "name": "Cuptor cu microunde Samsung",
+    "price": 800,
+    "category": "Appliances",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 7,
+    "name": "Cana termica Contigo",
+    "price": 100,
+    "category": "Kitchen",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 8,
+    "name": "Set de cutite de bucatarie",
+    "price": 500,
+    "category": "Kitchen",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 9,
+    "name": "Tigaie antiaderenta Tefal",
+    "price": 150,
+    "category": "Kitchen",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 10,
+    "name": "Blender Philips",
+    "price": 300,
+    "category": "Kitchen",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 11,
+    "name": "Aspirator Dyson",
+    "price": 2000,
+    "category": "Home",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 12,
+    "name": "Lampa de birou Philips",
+    "price": 150,
+    "category": "Home",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 13,
+    "name": "Covor decorativ IKEA",
+    "price": 400,
+    "category": "Home",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 14,
+    "name": "Perna de calatorie Cabeau",
+    "price": 200,
+    "category": "Travel",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 15,
+    "name": "Rucsac de calatorie Osprey",
+    "price": 500,
+    "category": "Travel",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 16,
+    "name": "Troller Samsonite",
+    "price": 800,
+    "category": "Travel",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 17,
+    "name": "Ceas inteligent Apple Watch",
+    "price": 1500,
+    "category": "Wearables",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 18,
+    "name": "Bratara fitness Fitbit",
+    "price": 300,
+    "category": "Wearables",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 19,
+    "name": "Ochelari de soare Ray-Ban",
+    "price": 600,
+    "category": "Accessories",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 20,
+    "name": "Portofel din piele Fossil",
+    "price": 200,
+    "category": "Accessories",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 21,
+    "name": "Curea din piele Levi's",
+    "price": 150,
+    "category": "Accessories",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 22,
+    "name": "Rama foto digitala Nixplay",
+    "price": 400,
+    "category": "Home",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 23,
+    "name": "Boxa portabila JBL",
+    "price": 300,
+    "category": "Audio",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 24,
+    "name": "Casti audio Sony",
+    "price": 500,
+    "category": "Audio",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 25,
+    "name": "Microfon USB Blue Yeti",
+    "price": 600,
+    "category": "Audio",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 26,
+    "name": "Camera video GoPro",
+    "price": 1200,
+    "category": "Photography",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 27,
+    "name": "Obiectiv foto Canon",
+    "price": 2000,
+    "category": "Photography",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 28,
+    "name": "Trepied foto Manfrotto",
+    "price": 300,
+    "category": "Photography",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 29,
+    "name": "Rucsac foto Lowepro",
+    "price": 400,
+    "category": "Photography",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 30,
+    "name": "E-reader Kindle",
+    "price": 800,
+    "category": "Electronics",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 31,
+    "name": "Tableta iPad",
+    "price": 2500,
+    "category": "Electronics",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 32,
+    "name": "Laptop Dell",
+    "price": 3500,
+    "category": "Electronics",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 33,
+    "name": "Smartphone Huawei",
+    "price": 2200,
+    "category": "Electronics",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 34,
+    "name": "Televizor Sony",
+    "price": 4500,
+    "category": "Electronics",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 35,
+    "name": "Frigider Samsung",
+    "price": 3800,
+    "category": "Appliances",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 36,
+    "name": "Masina de spalat LG",
+    "price": 2700,
+    "category": "Appliances",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 37,
+    "name": "Cuptor cu microunde Panasonic",
+    "price": 900,
+    "category": "Appliances",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 38,
+    "name": "Cana termica Zojirushi",
+    "price": 120,
+    "category": "Kitchen",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 39,
+    "name": "Set de cutite de bucatarie Global",
+    "price": 700,
+    "category": "Kitchen",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 40,
+    "name": "Tigaie antiaderenta GreenPan",
+    "price": 200,
+    "category": "Kitchen",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 41,
+    "name": "Blender NutriBullet",
+    "price": 350,
+    "category": "Kitchen",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 42,
+    "name": "Aspirator robot iRobot Roomba",
+    "price": 2500,
+    "category": "Home",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 43,
+    "name": "Lampa de birou Xiaomi",
+    "price": 180,
+    "category": "Home",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 44,
+    "name": "Covor decorativ H&M Home",
+    "price": 350,
+    "category": "Home",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 45,
+    "name": "Perna de calatorie Trtl",
+    "price": 150,
+    "category": "Travel",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 46,
+    "name": "Rucsac de calatorie Deuter",
+    "price": 600,
+    "category": "Travel",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "id": 47,
+    "name": "Troller American Tourister",
+    "price": 900,
+    "category": "Travel",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s"
+  },
+  {
+    "name": "123",
+    "price": "123",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4DkkdPlEFryQsUJR9R3OrXk5rkml9PdXGYg&s",
+    "category": "123",
+    "id": 48
+  }
+]
