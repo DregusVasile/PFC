@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <title>Product</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='product.css') }}">
+<link rel="stylesheet" href="/static/product.css">
+<link rel="stylesheet" href="/static/cart.css">
 </head>
 <script src="{{ url_for('static', filename='cart.js') }}"></script>
 <body>
@@ -12,9 +13,21 @@
 
   <div style="float:right">
     <span id="username" onclick="goProfile()" style="cursor:pointer"></span>
-    🛒 <span id="cartCount">0</span>
+    <span class="cart-toggle" onclick="toggleCartPopup()">🛒 <span id="cartCount">0</span></span>
   </div>
 
+</div>
+
+<div id="cartPopup" class="cart-popup">
+  <div class="cart-popup-header">
+    <h3>Your Cart</h3>
+    <button class="cart-popup-close" onclick="toggleCartPopup()">×</button>
+  </div>
+  <div class="cart-total-section">
+    <div id="cartPopupTotal" class="cart-total">Total: 0 RON</div>
+    <button class="buy-all-cart-btn" onclick="buyAllFromCart()">Buy All</button>
+  </div>
+  <div id="cartPopupItems" class="cart-items"></div>
 </div>
 
 <div class="container">
@@ -30,20 +43,18 @@
 
     <div class="stars" id="stars"></div>
     <p id="ratingCount"></p>
-
-    <div class="price" id="price"></div>
+    <p id="stockInfo"></p>
+    <p id="price"></p>
 
    <button onclick="addCurrentProduct()">Add</button>
 
     <div class="section">
-      <h3>Seller</h3>
-      <p id="seller"></p>
-      <p id="contact"></p>
-      <p id="location"></p>
+      <h3>Seller Information</h3>
+      <p><strong>Name:</strong> <span id="sellerName"></span></p>
+      <p><strong>Phone:</strong> <span id="sellerPhone"></span></p>
+      <p><strong>Email:</strong> <span id="sellerEmail"></span></p>
     </div>
-
   </div>
-
 </div>
 
 <!-- DESCRIPTION -->
@@ -84,37 +95,95 @@
   </div>
   <p class="copy">© 2026 TestShop. All rights reserved.</p>
 </footer>
-
+<script src="/static/cart.js"></script>
 <script>
-const product = JSON.parse(localStorage.getItem("selectedProduct"));
-const user = localStorage.getItem("currentUser") || "Guest";
+let product = null;
 
+async function loadProductData() {
+  const selected = JSON.parse(localStorage.getItem("selectedProduct"));
+  if (!selected) return;
+
+  try {
+    const res = await fetch("/all-products-json");
+    const all = await res.json();
+    product = all.find(p => p.id === selected.id) || selected;
+
+    if (product) {
+      document.getElementById("name").innerText = product.name;
+      document.getElementById("price").innerText = product.price + " RON";
+      document.getElementById("img").src = product.image;
+
+      const stockInfo = document.getElementById("stockInfo");
+      if (product.source === "my" || product.stock !== undefined) {
+        const stock = Number(product.stock || 0);
+        stockInfo.innerText = stock > 0 ? `Stoc: ${stock}` : "Stoc epuizat";
+      } else {
+        stockInfo.innerText = "Stoc infinit";
+      }
+
+      const currentUser = localStorage.getItem("currentUser") || "Guest";
+      if (product.seller === currentUser) {
+        // If current user is the seller, get their profile info
+        const profilePhone = localStorage.getItem("profilePhone") || "0712345678";
+        const profileEmail = localStorage.getItem("profileEmail") || "email@test.com";
+        document.getElementById("sellerName").innerText = currentUser;
+        document.getElementById("sellerPhone").innerText = profilePhone;
+        document.getElementById("sellerEmail").innerText = profileEmail;
+      } else {
+        document.getElementById("sellerName").innerText = product.seller || "TestShop";
+        document.getElementById("sellerPhone").innerText = product.sellerPhone || "0712345678";
+        document.getElementById("sellerEmail").innerText = product.sellerEmail || "email@test.com";
+      }
+
+      document.getElementById("desc").innerText =
+        product.description || "No description provided";
+
+      loadRatings();
+      loadComments();
+      loadRecommended();
+    }
+  } catch (e) {
+    console.error("Error loading product data:", e);
+    product = selected;
+    // Fallback
+    if (product) {
+      document.getElementById("name").innerText = product.name;
+      document.getElementById("price").innerText = product.price + " RON";
+      document.getElementById("img").src = product.image;
+      // etc.
+    }
+  }
+}
+
+function updateSellerInfo() {
+  if (!product) return;
+  const currentUser = localStorage.getItem("currentUser") || "Guest";
+  if (product.seller === currentUser) {
+    const profilePhone = localStorage.getItem("profilePhone") || "0712345678";
+    const profileEmail = localStorage.getItem("profileEmail") || "email@test.com";
+    document.getElementById("sellerName").innerText = currentUser;
+    document.getElementById("sellerPhone").innerText = profilePhone;
+    document.getElementById("sellerEmail").innerText = profileEmail;
+  }
+}
+
+const user = localStorage.getItem("currentUser") || "Guest";
 document.getElementById("username").innerText = user;
 
 // Track product view
-if(product) {
+const selected = JSON.parse(localStorage.getItem("selectedProduct"));
+if (selected) {
   fetch("/track-view", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      productId: product.id,
+      productId: selected.id,
       user: user
     })
   });
 }
 
-if(product){
-  document.getElementById("name").innerText = product.name;
-  document.getElementById("price").innerText = product.price + " RON";
-  document.getElementById("img").src = product.image;
-
-  document.getElementById("seller").innerText = user;
-  document.getElementById("contact").innerText = "email@test.com | 0712345678";
-  document.getElementById("location").innerText = "Romania";
-
-  document.getElementById("desc").innerText =
-    product.description || "No description provided";
-}
+loadProductData();
 
 /* ⭐ RATING - SERVER SIDE */
 async function loadRatings() {
@@ -180,7 +249,7 @@ async function addComment(){
     headers:{"Content-Type":"application/json"},
     body: JSON.stringify({
       user:user,
-      product:product.name,
+      product:product.id,
       text:text
     })
   });
@@ -199,7 +268,7 @@ async function loadComments(){
   const res = await fetch("/comments");
   const all = await res.json();
 
-  const list = all.filter(c => c.product === product.name);
+  const list = all.filter(c => c.product === product.id);
   renderComments(list);
 }
 
@@ -361,7 +430,15 @@ window.nextRecommended = function() {
   }
 }
 
-loadRecommended();
+window.addEventListener("resize", () => {
+  if (!recommendedProducts.length) return;
+  recommendedIndex = Math.min(
+    recommendedIndex,
+    Math.max(0, recommendedProducts.length - getItemsPerView())
+  );
+  renderRecommended();
+  updateCarouselButtons();
+});
 
 function goProfile(){
   window.location.href = "/user";
@@ -371,6 +448,56 @@ async function addCurrentProduct(){
   const response = await addToCart(product);
   if (response && response.ok) {
     await updateCartUI();
+  }
+}
+
+async function buyAll(){
+  const quantity = parseInt(document.getElementById("buyQuantity").value, 10) || 1;
+  if (quantity < 1) {
+    alert("Trebuie să selectezi cel puțin 1 produs.");
+    return;
+  }
+
+  const productStock = Number(product.stock || 0);
+  if (product.source === "my") {
+    if (productStock <= 0) {
+      alert("Nu mai sunt produse disponibile în stoc.");
+      return;
+    }
+    if (quantity > productStock) {
+      alert("Nu mai sunt suficiente produse în stoc.");
+      return;
+    }
+  }
+
+  const profileEmail = localStorage.getItem("profileEmail") || "email@gamil.com";
+  const profileName = localStorage.getItem("profileName") || currentUser;
+
+  const response = await fetch("/buy-all", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      user: currentUser,
+      userId: profileName,
+      email: profileEmail,
+      quantity,
+      product
+    })
+  });
+
+  const data = await response.json();
+  if (data.status === "ok") {
+    alert("Cumpărat cu succes!");
+    if (product.source === "my") {
+      const remaining = productStock - quantity;
+      product.stock = remaining > 0 ? remaining : 0;
+      document.getElementById("stockInfo").innerText = remaining > 0 ? `Stoc: ${remaining}` : "Stoc epuizat";
+      if (remaining <= 0) {
+        document.getElementById("buyQuantity").value = 1;
+      }
+    }
+  } else {
+    alert(data.message || "Eroare la cumpărare.");
   }
 }
 </script>

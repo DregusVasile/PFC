@@ -59,47 +59,54 @@ document.getElementById("signupBox").style.display="none"
 }
 
 /* AUTH */
-function signup(){
-const u = document.getElementById("signUser").value.trim()
-const p = document.getElementById("signPass").value
-const c = document.getElementById("confirmPass").value
+async function signup(){
+  const u = document.getElementById("signUser").value;
+  const p = document.getElementById("signPass").value;
+  const c = document.getElementById("confirmPass").value;
 
-if(!u || !p || !c){
-alert("Complete all fields")
-return
+  if(!u || !p || !c){
+    alert("Complete all fields");
+    return;
+  }
+
+  if(p !== c){
+    alert("Passwords do not match");
+    return;
+  }
+
+  const res = await fetch("/signup", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({username:u, password:p})
+  });
+
+  const data = await res.json();
+
+  if(data.status === "ok"){
+    alert("Account created!");
+    showLogin();
+  } else {
+    alert("User already exists");
+  }
 }
 
-if(p !== c){
-alert("Passwords do not match")
-return
-}
+async function login(){
+  const u = document.getElementById("loginUser").value;
+  const p = document.getElementById("loginPass").value;
 
-if(localStorage.getItem("user_"+u)){
-alert("User already exists")
-return
-}
+  const res = await fetch("/login", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({username:u, password:p})
+  });
 
-localStorage.setItem("user_"+u, p)
-alert("Account created!")
+  const data = await res.json();
 
-showLogin()
-}
-
-function login(){
-const u = document.getElementById("loginUser").value.trim()
-const p = document.getElementById("loginPass").value
-
-if(!u || !p){
-alert("Enter username and password")
-return
-}
-
-const saved = localStorage.getItem("user_"+u)
-
-if(saved === p){
-localStorage.setItem("currentUser", u) // 🔥 IMPORTANT
-window.location.href = "/shop"
-}else{
-alert("Wrong credentials")
-}
+  if(data.status === "ok"){
+    localStorage.setItem("currentUser", u);
+    localStorage.setItem("currentUserIsAdmin", data.isAdmin ? "true" : "false");
+    window.location.href = "/shop";
+  } else {
+    alert("Wrong credentials");
+  }
 }
